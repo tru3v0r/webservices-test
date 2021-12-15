@@ -10,8 +10,7 @@ import javax.persistence.OneToMany;
 import java.util.List;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
-@Builder
+@Getter @Setter @NoArgsConstructor
 public class Currency {
 
     @Id
@@ -23,6 +22,11 @@ public class Currency {
     @JsonIgnore
     List<Country> countries;
 
+    public Currency(String ticker, String name, double value) {
+        this.ticker = ticker;
+        this.name = name;
+        this.value = value;
+    }
 
     @Override
     public String toString() {

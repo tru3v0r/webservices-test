@@ -11,5 +11,5 @@ public interface CurrencyService {
     List<Currency> getAllCurrencies();
     void deleteByTicker(String ticker);
     void save(Currency currency);
-    //...
+    boolean existsByTicker(String ticker);
 }

@@ -1,8 +1,11 @@
 package fr.eql.al36.soa.tp.webservices.rest;
 
+import fr.eql.al36.soa.tp.webservices.dto.CurrencyDTO;
+import fr.eql.al36.soa.tp.webservices.dto.DTOUtil;
 import fr.eql.al36.soa.tp.webservices.dto.GenericMessage;
 import fr.eql.al36.soa.tp.webservices.entity.Currency;
 import fr.eql.al36.soa.tp.webservices.service.CurrencyService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,40 +24,33 @@ public class CurrencyRestController {
         this.currencyService = currencyService;
     }
 
-//    //V2 with CurrencyDTO
-//    List<Currency> getAllByCriteria(...) {
-//
-//    }
-//
-//    Currency getByCriteria(...) {
-//
-//    }
-
-    //CRUD : POST, GET, PUT, DELETE
-
     @GetMapping("public/currency")
-    List<Currency> getAll() {
-        return currencyService.getAllCurrencies();
+    List<CurrencyDTO> getAll() {
+        return DTOUtil.currenciesToDTO(currencyService.getAllCurrencies());
     }
 
     @GetMapping("public/currency/{id}")
-    Currency getCurrency(@PathVariable String id) {
-        return currencyService.getByTicker(id);
+    CurrencyDTO getCurrency(@PathVariable String id) {
+        Currency currency = currencyService.getByTicker(id);
+        //Converting entity to DTO through constructor
+        return new CurrencyDTO(currency.getTicker(), currency.getName(), currency.getValue());
+
+        //BeanUtils.copyProperties(sourceObj, targetObj);
     }
 
     //POST
     //http://localhost:8484/webservices/currency-api/private/currency
     //with { "ticker" : "DDK" , "name" : "Danish Krone", "value" : 7.77 }
     @PostMapping("private/currency")
-    public ResponseEntity<?> postCurrency(@RequestBody Currency currency) {
-        if(currencyService.getByTicker(currency.getTicker()) != null) {
+    public ResponseEntity<?> postCurrency(@RequestBody CurrencyDTO currencyDTO) {
+        if(currencyService.getByTicker(currencyDTO.getTicker()) != null) {
             return new ResponseEntity<GenericMessage>(
                     new GenericMessage("message","Conflict: currency with same ticker already exists"),
                     HttpStatus.CONFLICT);
         }
         else {
-            currencyService.save(currency);
-            return new ResponseEntity<Currency>(currency, HttpStatus.OK);
+            currencyService.save(new Currency(currencyDTO.getTicker(), currencyDTO.getName(), currencyDTO.getValue()));
+            return new ResponseEntity<CurrencyDTO>(currencyDTO, HttpStatus.OK);
         }
     }
 
