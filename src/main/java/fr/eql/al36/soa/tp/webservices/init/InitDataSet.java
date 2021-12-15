@@ -21,10 +21,11 @@ public class InitDataSet {
     }
 
     public void initData() {
-        Currency euro = Currency.builder().ticker("EUR").name("Euro").value(1).build();
-        Currency dollar = Currency.builder().ticker("USD").name("Dollar").value(1.1).build();
-        Currency pound = Currency.builder().ticker("GBP").name("Pound Sterling").value(0.9).build();
-        Currency yen = Currency.builder().ticker("JPY").name("Japanese Yen").value(113).build();
+        Currency euro = new Currency("EUR","Euro",1);
+        Currency dollar = new Currency("USD","Dollar",1.1);
+        Currency pound = new Currency("GBP","Pound Sterling",0.9);
+        Currency yen = new Currency("JPY","Japenese Yen",113);
+
         currencyService.save(euro);
         currencyService.save(dollar);
         currencyService.save(pound);
