@@ -2,6 +2,7 @@ package fr.eql.al36.soa.tp.webservices.service;
 
 import fr.eql.al36.soa.tp.webservices.dao.CurrencyDAO;
 import fr.eql.al36.soa.tp.webservices.entity.Currency;
+import fr.eql.al36.soa.tp.webservices.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,9 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public Currency getByTicker(String ticker) {
-        return currencyDAO.findById(ticker).orElse(null);
+        Optional<Currency> optionalCurrency = currencyDAO.findById(ticker);
+
+        return optionalCurrency.orElseThrow(() -> new NotFoundException("No currency found with this ticker"));
     }
 
     @Override
