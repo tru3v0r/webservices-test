@@ -22,7 +22,6 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     public Currency getByTicker(String ticker) {
         Optional<Currency> optionalCurrency = currencyDAO.findById(ticker);
-
         return optionalCurrency.orElseThrow(() -> new NotFoundException("No currency found with this ticker"));
     }
 
