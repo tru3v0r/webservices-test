@@ -1,5 +1,6 @@
 package fr.eql.al36.soa.tp.webservices.rest;
 
+import fr.eql.al36.soa.tp.webservices.dto.GenericMessage;
 import fr.eql.al36.soa.tp.webservices.entity.Currency;
 import fr.eql.al36.soa.tp.webservices.service.CurrencyService;
 import org.springframework.http.HttpStatus;
@@ -45,10 +46,16 @@ public class CurrencyRestController {
     //http://localhost:8484/webservices/currency-api/private/currency
     //with { "ticker" : "DDK" , "name" : "Danish Krone", "value" : 7.77 }
     @PostMapping("private/currency")
-    public ResponseEntity<Currency> postCurrency(@RequestBody Currency currency) {
-        // V1 (to be greatly improved)
-        currencyService.save(currency);
-        return new ResponseEntity<Currency>(currency, HttpStatus.OK);
+    public ResponseEntity<?> postCurrency(@RequestBody Currency currency) {
+        if(currencyService.getByTicker(currency.getTicker()) != null) {
+            return new ResponseEntity<GenericMessage>(
+                    new GenericMessage("message","Conflict: currency with same ticker already exists"),
+                    HttpStatus.CONFLICT);
+        }
+        else {
+            currencyService.save(currency);
+            return new ResponseEntity<Currency>(currency, HttpStatus.OK);
+        }
     }
 
     //PUT
