@@ -1,11 +1,11 @@
 package fr.eql.al36.soa.tp.webservices.rest;
 
+import fr.eql.al36.soa.tp.webservices.delegate.RefreshCurrency;
 import fr.eql.al36.soa.tp.webservices.dto.CurrencyDTO;
 import fr.eql.al36.soa.tp.webservices.dto.DTOUtil;
 import fr.eql.al36.soa.tp.webservices.dto.GenericMessage;
 import fr.eql.al36.soa.tp.webservices.entity.Currency;
 import fr.eql.al36.soa.tp.webservices.service.CurrencyService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +20,18 @@ public class CurrencyRestController {
 
     private final CurrencyService currencyService;
 
-    public CurrencyRestController(CurrencyService currencyService) {
+    private final RefreshCurrency refreshCurrency;
+
+    public CurrencyRestController(CurrencyService currencyService, RefreshCurrency refreshCurrency) {
         this.currencyService = currencyService;
+        this.refreshCurrency = refreshCurrency;
+    }
+
+    //http://localhost:8484/webServices/devise-api/private/refresh
+    @GetMapping(value="/private/refresh")
+    public GenericMessage refreshValues() {
+        List<Currency> currencies = this.refreshCurrency.refreshCurrencyValuesInDataBase();
+        return new GenericMessage("refresh ok",currencies.toString());
     }
 
     @GetMapping("public/currency")
